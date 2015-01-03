@@ -14,6 +14,11 @@ public class RedisDataSource extends GroupDataSource {
     private static final String PREFIX = "vperms.group.";
     private static final String DEFINED_KEY = PREFIX + "defined";
 
+    public RedisDataSource() {
+        for (String s : getDefinedGroups())
+            updateGroup(s);
+    }
+
     @Override
     public List<String> getDefinedGroups() {
         try (Jedis jedis = vPermsPlugin.getJedisPool().getResource()) {
@@ -41,6 +46,15 @@ public class RedisDataSource extends GroupDataSource {
         try (Jedis jedis = vPermsPlugin.getJedisPool().getResource()) {
             jedis.set(PREFIX + group.getName(), json);
             jedis.sadd(DEFINED_KEY, group.getName());
+        }
+    }
+
+    @Override
+    public void deleteGroup(Group group) {
+        groupCache.remove(group.getName());
+        try (Jedis jedis = vPermsPlugin.getJedisPool().getResource()) {
+            jedis.srem(DEFINED_KEY, group.getName());
+            jedis.del(PREFIX + group.getName());
         }
     }
 }

@@ -50,4 +50,6 @@ public abstract class GroupDataSource {
      * @param toSave
      */
     public abstract void saveGroup(Group toSave);
+
+    public abstract void deleteGroup(Group toDelete);
 }
