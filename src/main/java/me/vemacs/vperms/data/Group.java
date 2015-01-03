@@ -1,5 +1,6 @@
 package me.vemacs.vperms.data;
 
+import com.google.common.collect.ImmutableSet;
 import lombok.Data;
 import lombok.NonNull;
 import me.vemacs.vperms.storage.GroupDataSource;
@@ -33,10 +34,7 @@ public class Group {
     }
 
     public static <T> List<T> squash(List<T> toSquash) {
-        List<T> tmp = new ArrayList<>();
-        for (T element : toSquash)
-            if (!tmp.contains(element)) tmp.add(element);
-        return tmp;
+        return ImmutableSet.copyOf(toSquash).asList();
     }
 
     public List<String> calculateGroupTree() {
