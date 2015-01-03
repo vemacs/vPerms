@@ -3,6 +3,7 @@ package me.vemacs.vperms;
 import lombok.Getter;
 import lombok.Setter;
 import me.vemacs.vperms.storage.GroupDataSource;
+import me.vemacs.vperms.storage.RedisDataSource;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -25,6 +26,7 @@ public class vPermsPlugin extends JavaPlugin {
             jedisPool = new JedisPool(new JedisPoolConfig(), ip, port, 0);
         else
             jedisPool = new JedisPool(new JedisPoolConfig(), ip, port, 0, password);
+        dataSource = new RedisDataSource();
     }
 
     @Override
