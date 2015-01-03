@@ -3,6 +3,8 @@ package me.vemacs.vperms.data;
 import lombok.Data;
 import lombok.NonNull;
 import me.vemacs.vperms.vPermsPlugin;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -64,6 +66,18 @@ public class Group {
             }
         }
         return tree;
+    }
+
+    @SuppressWarnings("unchecked")
+    public String serializedForm() {
+        JSONObject json = new JSONObject();
+        json.put("name", getName());
+        JSONArray parentArray = new JSONArray();
+        for (Group g : getParents())
+            parentArray.add(g.getName());
+        json.put("parents", parentArray);
+        json.put("permissions", new JSONObject(getPermissions()));
+        return json.toJSONString();
     }
 }
 
