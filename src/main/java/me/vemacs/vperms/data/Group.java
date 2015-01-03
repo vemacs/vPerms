@@ -2,10 +2,7 @@ package me.vemacs.vperms.data;
 
 import lombok.Data;
 import lombok.NonNull;
-import me.vemacs.vperms.storage.GroupDataSource;
 import me.vemacs.vperms.vPermsPlugin;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,8 +18,10 @@ public class Group {
     @NonNull
     private Map<String, Boolean> permissions;
 
-    public String getName() {
-        return name.toLowerCase();
+    public Group(String name, List<String> parents, Map<String, Boolean> permissions) {
+        this.name = name.toLowerCase();
+        this.parents = parents;
+        this.permissions = permissions;
     }
 
     public Map<String, Boolean> computeEffectivePermissions() {
@@ -78,15 +77,6 @@ public class Group {
 
     public static Group getGroupFor(String name) {
         return vPermsPlugin.getDataSource().getGroup(name);
-    }
-
-    @SuppressWarnings("unchecked")
-    public String serializedForm() {
-        JSONObject json = new JSONObject();
-        json.put("name", getName());
-        json.put("parents", getParents());
-        json.put("permissions", new JSONObject(getPermissions()));
-        return json.toJSONString();
     }
 }
 

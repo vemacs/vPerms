@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class GroupDataSource {
-    private Map<String, Group> groupCache = new ConcurrentHashMap<>();
+    protected Map<String, Group> groupCache = new ConcurrentHashMap<>();
 
     /**
      * Loads the list of defined groups from backend
