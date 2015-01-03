@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.NonNull;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class Group {
@@ -12,6 +14,15 @@ public class Group {
     private String name;
     @NonNull
     private List<Group> parents;
+    @NonNull
+    private Map<String, Boolean> permissions;
+
+    public Map<String, Boolean> computeEffectivePermissions() {
+        Map<String, Boolean> perms = new LinkedHashMap<>();
+        for (Group g : calculateGroupTree())
+            perms.putAll(g.getPermissions());
+        return perms;
+    }
 
     public static <T> List<T> squash(List<T> toSquash) {
         List<T> tmp = new ArrayList<>();

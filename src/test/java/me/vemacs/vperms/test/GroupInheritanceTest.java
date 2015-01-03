@@ -1,26 +1,47 @@
 package me.vemacs.vperms.test;
 
+import com.google.common.collect.ImmutableMap;
 import me.vemacs.vperms.data.Group;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class GroupInheritanceTest {
     @Test
     public void testGroupInheritance() {
-        Group defaultGroup = new Group("default", Collections.<Group>emptyList());
-        Group modGroup = new Group("mod", Arrays.asList(defaultGroup));
-        Group adminGroup = new Group("admin", Arrays.asList(modGroup));
-        Group premiumGroup = new Group("premium", Arrays.asList(defaultGroup));
-        Group premiumMod = new Group("premmod", Arrays.asList(premiumGroup, modGroup));
-        Group specialAdminUser =  new Group("special", Arrays.asList(premiumGroup, modGroup, adminGroup));
+        Map<String, Boolean> defaultPerms = new ImmutableMap.Builder<String, Boolean>()
+                .put("smoke.weed", true)
+                .put("dank.memes", false)
+                .build();
+        Group defaultGroup = new Group("default", Collections.<Group>emptyList(), defaultPerms);
+        Map<String, Boolean> modPerms = new ImmutableMap.Builder<String, Boolean>()
+                .put("ban.hammer", true)
+                .build();
+        Group modGroup = new Group("mod", Arrays.asList(defaultGroup), modPerms);
+        Map<String, Boolean> adminPerms = new ImmutableMap.Builder<String, Boolean>()
+                .put("hack.the.gibson", true)
+                .build();
+        Group adminGroup = new Group("admin", Arrays.asList(modGroup), adminPerms);
+        Map<String, Boolean> premiumPerms = new ImmutableMap.Builder<String, Boolean>()
+                .put("dank.memes", true)
+                .build();
+        Group premiumGroup = new Group("premium", Arrays.asList(defaultGroup), premiumPerms);
+        Group premiumMod = new Group("premmod", Arrays.asList(premiumGroup, modGroup),
+                Collections.<String, Boolean>emptyMap());
+        // Double inheritance is intended
+        Group specialAdminUser =  new Group("special", Arrays.asList(premiumGroup, modGroup, adminGroup),
+                Collections.<String, Boolean>emptyMap());
         Group[] toTest = {defaultGroup, modGroup, adminGroup, premiumGroup, premiumMod, specialAdminUser};
         for (Group g : toTest) {
             System.out.println("Testing " + g.getName());
             System.out.println("Ordered parents: " + groupCollectionToString(g.getParents()));
             System.out.println("Group tree: " + groupCollectionToString(g.calculateGroupTree()));
+            System.out.println("Effective permissions: ");
+            for (Map.Entry<String, Boolean> entry : g.computeEffectivePermissions().entrySet())
+                System.out.println("- " + entry.getKey() + ", " + entry.getValue().toString());
         }
     }
 

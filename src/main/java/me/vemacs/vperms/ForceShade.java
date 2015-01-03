@@ -6,7 +6,7 @@ import org.apache.commons.pool2.impl.DefaultEvictionPolicy;
 public class ForceShade {
     static {
         Class<?>[] classes = new Class<?>[]{
-                DefaultEvictionPolicy.class,
+                DefaultEvictionPolicy.class
         };
     }
 }
