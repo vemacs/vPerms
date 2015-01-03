@@ -2,6 +2,7 @@ package me.vemacs.vperms.data;
 
 import lombok.Data;
 import lombok.NonNull;
+import me.vemacs.vperms.vPermsPlugin;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,7 +39,7 @@ public class Group {
             if (top.getName().equalsIgnoreCase(getName()))
                 continue;
             for (Group trunk : calculateBackwardTree(top))
-                    tree.add(0, trunk);
+                tree.add(0, trunk);
         }
         return squash(tree);
     }
@@ -47,14 +48,19 @@ public class Group {
         List<Group> tree = new ArrayList<>();
         tree.add(group);
         for (Group top : group.getParents()) {
-            try {
-                if (top.getName().equalsIgnoreCase(group.getName()))
-                    continue;
-                for (Group trunk : calculateBackwardTree(top))
-                    tree.add(trunk);
-            } catch (StackOverflowError e) {
-                System.out.println("[WARNING] Group " + getName() + " has circular inheritance, please fix");
-                return group.getParents();
+            if (top.getName().equalsIgnoreCase(group.getName()))
+                continue;
+            if (top.getParents().contains(group)) {
+                String errorMessage = "Group " + getName() + " has a circular inheritance issue.";
+                try {
+                    vPermsPlugin.getInstance().getLogger().warning(errorMessage);
+                } catch (NullPointerException e) {
+                    System.out.println("[WARNING] " + errorMessage);
+                }
+                continue;
+            }
+            for (Group trunk : calculateBackwardTree(top)) {
+                tree.add(trunk);
             }
         }
         return tree;
