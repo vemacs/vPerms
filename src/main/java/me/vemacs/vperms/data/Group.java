@@ -1,24 +1,17 @@
 package me.vemacs.vperms.data;
 
+import lombok.Data;
+import lombok.NonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class Group {
+    @NonNull
     private String name;
+    @NonNull
     private List<Group> parents;
-
-    public Group(String name, List<Group> parents) {
-        this.name = name;
-        this.parents = parents;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<Group> getParents() {
-        return parents;
-    }
 
     public static <T> List<T> squash(List<T> toSquash) {
         List<T> tmp = new ArrayList<>();
