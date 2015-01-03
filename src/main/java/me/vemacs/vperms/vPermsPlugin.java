@@ -1,6 +1,8 @@
 package me.vemacs.vperms;
 
 import lombok.Getter;
+import lombok.Setter;
+import me.vemacs.vperms.storage.GroupDataSource;
 import org.bukkit.plugin.java.JavaPlugin;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -10,6 +12,8 @@ public class vPermsPlugin extends JavaPlugin {
     private static vPermsPlugin instance;
     @Getter
     private static JedisPool jedisPool;
+    @Getter @Setter
+    private static GroupDataSource dataSource;
 
     @Override
     public void onEnable() {

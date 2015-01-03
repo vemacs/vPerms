@@ -2,6 +2,7 @@ package me.vemacs.vperms.data;
 
 import lombok.Data;
 import lombok.NonNull;
+import me.vemacs.vperms.storage.GroupDataSource;
 import me.vemacs.vperms.vPermsPlugin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -16,14 +17,18 @@ public class Group {
     @NonNull
     private String name;
     @NonNull
-    private List<Group> parents;
+    private List<String> parents;
     @NonNull
     private Map<String, Boolean> permissions;
 
+    public String getName() {
+        return name.toLowerCase();
+    }
+
     public Map<String, Boolean> computeEffectivePermissions() {
         Map<String, Boolean> perms = new LinkedHashMap<>();
-        for (Group g : calculateGroupTree())
-            perms.putAll(g.getPermissions());
+        for (String ancestor : calculateGroupTree())
+            perms.putAll(getGroupFor(ancestor).getPermissions());
         return perms;
     }
 
@@ -34,25 +39,28 @@ public class Group {
         return tmp;
     }
 
-    public List<Group> calculateGroupTree() {
-        List<Group> tree = new ArrayList<>();
-        tree.add(0, this);
-        for (Group top : parents) {
-            if (top.getName().equalsIgnoreCase(getName()))
+    public List<String> calculateGroupTree() {
+        List<String> tree = new ArrayList<String>();
+        tree.add(0, getName());
+        for (String top : parents) {
+            if (top.equalsIgnoreCase(getName())) {
                 continue;
-            for (Group trunk : calculateBackwardTree(top))
+            }
+            for (String trunk : calculateBackwardTree(top)) {
                 tree.add(0, trunk);
+            }
         }
         return squash(tree);
     }
 
-    private List<Group> calculateBackwardTree(Group group) {
-        List<Group> tree = new ArrayList<>();
+    private List<String> calculateBackwardTree(String group) {
+        List<String> tree = new ArrayList<String>();
         tree.add(group);
-        for (Group top : group.getParents()) {
-            if (top.getName().equalsIgnoreCase(group.getName()))
+        for (String top : getGroupFor(group).getParents()) {
+            if (top.equalsIgnoreCase(group)) {
                 continue;
-            if (top.getParents().contains(group)) {
+            }
+            if (getGroupFor(top).getParents().contains(group)) {
                 String errorMessage = "Group " + getName() + " has a circular inheritance issue.";
                 try {
                     vPermsPlugin.getInstance().getLogger().warning(errorMessage);
@@ -61,21 +69,22 @@ public class Group {
                 }
                 continue;
             }
-            for (Group trunk : calculateBackwardTree(top)) {
+            for (String trunk : calculateBackwardTree(top)) {
                 tree.add(trunk);
             }
         }
         return tree;
     }
 
+    public static Group getGroupFor(String name) {
+        return vPermsPlugin.getDataSource().getGroup(name);
+    }
+
     @SuppressWarnings("unchecked")
     public String serializedForm() {
         JSONObject json = new JSONObject();
         json.put("name", getName());
-        JSONArray parentArray = new JSONArray();
-        for (Group g : getParents())
-            parentArray.add(g.getName());
-        json.put("parents", parentArray);
+        json.put("parents", getParents());
         json.put("permissions", new JSONObject(getPermissions()));
         return json.toJSONString();
     }

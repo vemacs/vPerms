@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PlayerData extends Group {
-    public PlayerData(String name, List<Group> parents, Map<String, Boolean> permissions) {
+    public PlayerData(String name, List<String> parents, Map<String, Boolean> permissions) {
         super(name, parents, permissions);
     }
 }
