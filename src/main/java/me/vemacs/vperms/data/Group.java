@@ -38,7 +38,7 @@ public class Group {
             if (top.getName().equalsIgnoreCase(getName()))
                 continue;
             for (Group trunk : calculateBackwardTree(top))
-                tree.add(0, trunk);
+                    tree.add(0, trunk);
         }
         return squash(tree);
     }
@@ -47,10 +47,15 @@ public class Group {
         List<Group> tree = new ArrayList<>();
         tree.add(group);
         for (Group top : group.getParents()) {
-            if (top.getName().equalsIgnoreCase(group.getName()))
-                continue;
-            for (Group trunk : calculateBackwardTree(top))
-                tree.add(trunk);
+            try {
+                if (top.getName().equalsIgnoreCase(group.getName()))
+                    continue;
+                for (Group trunk : calculateBackwardTree(top))
+                    tree.add(trunk);
+            } catch (StackOverflowError e) {
+                System.out.println("[WARNING] Group " + getName() + " has circular inheritance, please fix");
+                return group.getParents();
+            }
         }
         return tree;
     }

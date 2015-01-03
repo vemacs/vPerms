@@ -34,7 +34,14 @@ public class GroupInheritanceTest {
         // Double inheritance is intended
         Group specialAdminUser =  new Group("special", Arrays.asList(premiumGroup, modGroup, adminGroup),
                 Collections.<String, Boolean>emptyMap());
-        Group[] toTest = {defaultGroup, modGroup, adminGroup, premiumGroup, premiumMod, specialAdminUser};
+
+        Group circularDependency1;
+        Group circularDependency2;
+        circularDependency1 = new Group("circ1", Collections.<Group>emptyList(), defaultPerms);
+        circularDependency2 = new Group("circ2", Arrays.asList(circularDependency1), defaultPerms);
+        circularDependency1.setParents(Arrays.asList(circularDependency2));
+
+        Group[] toTest = {defaultGroup, modGroup, adminGroup, premiumGroup, premiumMod, specialAdminUser, circularDependency2};
         for (Group g : toTest) {
             System.out.println("Testing " + g.getName());
             System.out.println("Ordered parents: " + groupCollectionToString(g.getParents()));
