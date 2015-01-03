@@ -1,0 +1,4 @@
+author: vemacs
+main: me.vemacs.vperms.vPermsPlugin
+name: vPerms
+version: ${version}
