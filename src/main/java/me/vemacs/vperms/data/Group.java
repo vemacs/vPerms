@@ -55,23 +55,32 @@ public class Group {
         List<String> tree = new ArrayList<>();
         tree.add(group);
         for (String top : getGroupFor(group).getParents()) {
-            if (top.equalsIgnoreCase(group)) {
-                continue;
-            }
-            if (getGroupFor(top).getParents().contains(group)) {
-                String errorMessage = "Group " + getName() + " has a circular inheritance issue.";
-                try {
-                    vPermsPlugin.getInstance().getLogger().warning(errorMessage);
-                } catch (NullPointerException e) {
-                    System.out.println("[WARNING] " + errorMessage);
+            try {
+                if (top.equalsIgnoreCase(group)) {
+                    continue;
                 }
-                continue;
-            }
-            for (String trunk : calculateBackwardTree(top)) {
-                tree.add(trunk);
+                if (getGroupFor(top).getParents().contains(group)) {
+                    outputCircularInheritanceWarning();
+                    continue;
+                }
+                for (String trunk : calculateBackwardTree(top)) {
+                    tree.add(trunk);
+                }
+            } catch (StackOverflowError e) {
+                outputCircularInheritanceWarning();
+                return getGroupFor(group).getParents();
             }
         }
         return tree;
+    }
+
+    private void outputCircularInheritanceWarning() {
+        String errorMessage = "Group " + getName() + " has a circular inheritance issue.";
+        try {
+            vPermsPlugin.getInstance().getLogger().warning(errorMessage);
+        } catch (NullPointerException e) {
+            System.out.println("[WARNING] " + errorMessage);
+        }
     }
 
     public static Group getGroupFor(String name) {

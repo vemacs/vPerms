@@ -35,8 +35,7 @@ public class TestGroupDataSource extends GroupDataSource {
                 modGroup.getName(), adminGroup.getName()),
                 Collections.<String, Boolean>emptyMap());
 
-        Group circularDependency1;
-        Group circularDependency2;
+        Group circularDependency1, circularDependency2;
         circularDependency1 = new Group("circ1", Collections.<String>emptyList(), defaultPerms);
         circularDependency2 = new Group("circ2", Arrays.asList(circularDependency1.getName()), defaultPerms);
         circularDependency1.setParents(Arrays.asList(circularDependency2.getName()));
