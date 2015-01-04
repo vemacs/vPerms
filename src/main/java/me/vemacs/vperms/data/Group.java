@@ -36,8 +36,9 @@ public class Group {
         return ImmutableSet.copyOf(toSquash).asList();
     }
 
+    // Adapted from Privileges code
     public List<String> calculateGroupTree() {
-        List<String> tree = new ArrayList<String>();
+        List<String> tree = new ArrayList<>();
         tree.add(0, getName());
         for (String top : parents) {
             if (top.equalsIgnoreCase(getName())) {
@@ -51,7 +52,7 @@ public class Group {
     }
 
     private List<String> calculateBackwardTree(String group) {
-        List<String> tree = new ArrayList<String>();
+        List<String> tree = new ArrayList<>();
         tree.add(group);
         for (String top : getGroupFor(group).getParents()) {
             if (top.equalsIgnoreCase(group)) {
