@@ -40,8 +40,14 @@ public class TestGroupDataSource extends GroupDataSource {
         circularDependency2 = new Group("circ2", Arrays.asList(circularDependency1.getName()), defaultPerms);
         circularDependency1.setParents(Arrays.asList(circularDependency2.getName()));
 
+        Group ub1, ub2, ub3;
+        ub1 = new Group("ub1", Collections.<String>emptyList(), defaultPerms);
+        ub2 = new Group("ub2", Arrays.asList(ub1.getName()), defaultPerms);
+        ub3 = new Group("ub3", Arrays.asList(ub2.getName()), defaultPerms);
+        ub1.setParents(Arrays.asList(ub3.getName()));
+
         List<Group> groups = Arrays.asList(defaultGroup, modGroup, adminGroup, premiumGroup, premiumMod, specialAdminUser,
-                circularDependency1, circularDependency2);
+                circularDependency1, circularDependency2, ub1, ub2, ub3);
 
         for (Group g : groups)
             testDataSet.put(g.getName(), g);
