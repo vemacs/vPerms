@@ -1,6 +1,7 @@
 package me.vemacs.vperms.test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import me.vemacs.vperms.data.Group;
 import me.vemacs.vperms.storage.GroupDataSource;
 
@@ -10,10 +11,10 @@ public class TestGroupDataSource extends GroupDataSource {
     public Map<String, Group> testDataSet = new LinkedHashMap<>();
 
     public TestGroupDataSource() {
-        Map<String, Boolean> defaultPerms = new ImmutableMap.Builder<String, Boolean>()
+        Map<String, Boolean> defaultPerms = Maps.newHashMap(new ImmutableMap.Builder<String, Boolean>()
                 .put("smoke.weed", true)
                 .put("dank.memes", false)
-                .build();
+                .build());
         Group defaultGroup = new Group("default", Collections.<String>emptyList(), defaultPerms);
         Map<String, Boolean> modPerms = new ImmutableMap.Builder<String, Boolean>()
                 .put("ban.hammer", true)
@@ -54,7 +55,11 @@ public class TestGroupDataSource extends GroupDataSource {
 
     @Override
     protected Group loadGroup(String name) {
-        return testDataSet.get(name);
+        if (!groupCache.containsKey(name))
+            return testDataSet.get(name);
+        // Purely for testing, our perms maps should be mutable in normal cases
+        groupCache.get(name).getPermissions().put("ayy.lmao", true);
+        return groupCache.get(name);
     }
 
     @Override

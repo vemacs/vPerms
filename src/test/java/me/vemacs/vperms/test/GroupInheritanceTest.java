@@ -13,6 +13,14 @@ public class GroupInheritanceTest {
     public void testGroupInheritance() {
         GroupDataSource gds = new TestGroupDataSource();
         vPermsPlugin.setDataSource(gds);
+        System.out.println("--Running group test--");
+        testAllGroups(gds);
+        System.out.println("--Running updated group test--");
+        gds.updateGroup("default");
+        testAllGroups(gds);
+    }
+
+    public void testAllGroups(GroupDataSource gds) {
         for (String gName : gds.getDefinedGroups()) {
             Group g = gds.getGroup(gName);
             System.out.println("Testing " + g.getName());
