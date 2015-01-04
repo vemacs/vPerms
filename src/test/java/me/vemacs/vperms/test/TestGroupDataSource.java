@@ -61,4 +61,9 @@ public class TestGroupDataSource extends GroupDataSource {
     public void saveGroup(Group toSave) {
 
     }
+
+    @Override
+    public void deleteGroup(Group toDelete) {
+
+    }
 }
