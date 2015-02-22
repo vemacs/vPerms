@@ -3,11 +3,11 @@ package me.vemacs.vperms.storage;
 import me.vemacs.vperms.data.Group;
 
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class GroupDataSource {
-    protected Map<String, Group> groupCache = new ConcurrentHashMap<>();
+    protected ConcurrentMap<String, Group> groupCache = new ConcurrentHashMap<>();
 
     /**
      * Loads the list of defined groups from backend
